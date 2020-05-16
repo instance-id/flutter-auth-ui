@@ -21,6 +21,7 @@ enum FauiFailures {
 class FauiError extends Error {
   final FauiFailures type;
   final String message;
+
   FauiError(this.message, this.type);
 
   @override

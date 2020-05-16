@@ -13,14 +13,12 @@ enum FauiHttpMethod {
   delete,
 }
 
-Future<T> sendFauiHttp<T>(
-  FauiHttpMethod method,
-  Map<String, String> headers,
-  String url,
-  Map<String, dynamic> content,
-  HashSet<String> acceptableWordsInErrorBody,
-  String actionToLog,
-) async {
+Future<T> sendFauiHttp<T>(FauiHttpMethod method,
+    Map<String, String> headers,
+    String url,
+    Map<String, dynamic> content,
+    HashSet<String> acceptableWordsInErrorBody,
+    String actionToLog,) async {
   Response response;
   switch (method) {
     case FauiHttpMethod.get:

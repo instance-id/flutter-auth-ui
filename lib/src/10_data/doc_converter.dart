@@ -14,7 +14,9 @@ class _FbTypes {
 
 String extractId(String docName) {
   // example of docName: "projects/flutterauth-c3973/databases/(default)/documents/test/240c35d4-0b0b-423f-ae80-55cd9f05ad4f"
-  return docName.split("/").last;
+  return docName
+      .split("/")
+      .last;
 }
 
 Map<String, dynamic> map2doc(Map<String, dynamic> map) {
@@ -27,8 +29,7 @@ Map<String, dynamic> map2doc(Map<String, dynamic> map) {
   return fbDoc;
 }
 
-Map<String, dynamic> doc2map(
-    Map<String, dynamic> doc, String descriptionForErrorLog) {
+Map<String, dynamic> doc2map(Map<String, dynamic> doc, String descriptionForErrorLog) {
   if (doc == null) {
     return null;
   }
@@ -68,10 +69,10 @@ String toFbType(dynamic value) {
   return value == null
       ? _FbTypes.nullV
       : value is String
-          ? _FbTypes.string
-          : value is bool
-              ? _FbTypes.bool
-              : value is int
-                  ? _FbTypes.int
-                  : value is double ? _FbTypes.double : _FbTypes.bytes;
+      ? _FbTypes.string
+      : value is bool
+      ? _FbTypes.bool
+      : value is int
+      ? _FbTypes.int
+      : value is double ? _FbTypes.double : _FbTypes.bytes;
 }

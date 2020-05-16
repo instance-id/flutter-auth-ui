@@ -28,11 +28,9 @@ class FauiDbAccess {
 
   FauiDbAccess(this.db, this.token);
 
-  Future<void> saveDoc(
-    String collection,
-    String docId,
-    Map<String, dynamic> content,
-  ) async {
+  Future<void> saveDoc(String collection,
+      String docId,
+      Map<String, dynamic> content,) async {
     // https://cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/patch
 
     await db_connector.dbPatchDoc(
@@ -40,8 +38,7 @@ class FauiDbAccess {
   }
 
   //Future<List<Map<String, dynamic>>>
-  Future<List<Map<String, dynamic>>> listDocs(
-    String collection, [
+  Future<List<Map<String, dynamic>>> listDocs(String collection, [
     List<FilterItem> filter,
   ]) async {
     // https://cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/runQuery
@@ -55,13 +52,14 @@ class FauiDbAccess {
             "compositeFilter": {
               "op": "AND",
               "filters": filter
-                  .map((f) => {
-                        "fieldFilter": {
-                          "field": {"fieldPath": f.field},
-                          "op": f.operation,
-                          "value": {toFbType(f.value): f.value}
-                        }
-                      })
+                  .map((f) =>
+              {
+                "fieldFilter": {
+                  "field": {"fieldPath": f.field},
+                  "op": f.operation,
+                  "value": {toFbType(f.value): f.value}
+                }
+              })
                   .toList(),
             }
           },
@@ -88,14 +86,12 @@ class FauiDbAccess {
     return docs;
   }
 
-  Future<Map<String, dynamic>> loadDoc(
-    String collection,
-    String docId,
-  ) async {
+  Future<Map<String, dynamic>> loadDoc(String collection,
+      String docId,) async {
     // https: //cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/get
 
     Map<String, dynamic> doc =
-        await db_connector.dbGetDoc(db, token, collection, docId);
+    await db_connector.dbGetDoc(db, token, collection, docId);
 
     String error = "Firebase returned unexpected data format for collection "
         "$collection, docId $docId";
@@ -103,10 +99,8 @@ class FauiDbAccess {
     return doc2map(doc, error);
   }
 
-  Future<void> deleteDoc(
-    String collection,
-    String docId,
-  ) async {
+  Future<void> deleteDoc(String collection,
+      String docId,) async {
     await db_connector.dbDeleteDoc(db, token, collection, docId);
   }
 }

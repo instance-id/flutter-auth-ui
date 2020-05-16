@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../90_model/faui_user.dart';
 
 import 'auth_connector.dart';
-import 'auth_state.dart';
+import 'auth_state_user.dart';
 
 class FauiLocalStorage {
   static const String _LocalKey = "user";
@@ -16,7 +16,7 @@ class FauiLocalStorage {
   static void deleteUserLocally() {
     _deleteLocally(_LocalKey);
     print("sso: deleted locally");
-  }
+}
 
   static trySignInSilently(String apiKey) async {
     print("sso: started silent sign-in");

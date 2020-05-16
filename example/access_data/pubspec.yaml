@@ -6,20 +6,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  global_configuration: ^1.5.0
+
 
   # After copying this example out of 'faui', update path
   # or reference pub.dev:
   #
   # faui: <latest version>
   #
-  # You can find latest version here: https://pub.dev/packages/faui 
+  # You can find latest version here: https://pub.dev/packages/faui
   faui:
     path: ./../..
 
-  http: ^0.12.0+2
+  http: ^0.12.1
   crypted_preferences: ^0.0.2
-  uuid: ^2.0.1
-  
+  uuid: ^2.0.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

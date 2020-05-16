@@ -8,24 +8,7 @@ import '../90_model/faui_user.dart';
 
 // https://firebase.google.com/docs/reference/rest/auth
 
-Future<void> fauiDeleteUserIfExists({
-  String apiKey,
-  String idToken,
-}) async {
-  FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
-  FauiError.throwIfEmpty(idToken, "idToken", FauiFailures.arg);
-
-  await _sendFbApiRequest(
-    apiKey: apiKey,
-    action: _FirebaseActions.DeleteAccount,
-    content: {
-      "idToken": idToken,
-    },
-    acceptableWordsInErrorBody:
-        HashSet.from({FirebaseErrorCodes.UserNotFoundCode}),
-  );
-}
-
+// -- fauiRegisterUser ---------------------------------------------------
 fauiRegisterUser({
   String apiKey,
   String email,
@@ -49,6 +32,7 @@ fauiRegisterUser({
   }
 }
 
+// -- fauiSignInUser -----------------------------------------------------
 Future<FauiUser> fauiSignInUser({
   String apiKey,
   String email,
@@ -70,16 +54,13 @@ Future<FauiUser> fauiSignInUser({
 
   FauiUser user = _firebaseResponseToUser(response);
 
-  if (user.email == null)
-    throw Exception(
-        "Email is not expected to be null in Firebase response for sign in");
-  if (user.userId == null)
-    throw Exception(
-        "UserId is not expected to be null in Firebase response for sign in");
+  if (user.email == null) throw Exception("Email is not expected to be null in Firebase response for sign in");
+  if (user.userId == null) throw Exception("UserId is not expected to be null in Firebase response for sign in");
 
   return user;
 }
 
+// -- fauiVerifyToken ----------------------------------------------------
 Future<FauiUser> fauiVerifyToken({
   String apiKey,
   String token,
@@ -113,6 +94,7 @@ Future<FauiUser> fauiVerifyToken({
   return user;
 }
 
+// -- fauiSendResetLink --------------------------------------------------
 Future<void> fauiSendResetLink({
   String apiKey,
   String email,
@@ -129,6 +111,7 @@ Future<void> fauiSendResetLink({
   );
 }
 
+// -- _firebaseResponseToUser --------------------------------------------
 FauiUser _firebaseResponseToUser(Map<String, dynamic> response) {
   String idToken = response['idToken'] ?? response['id_token'];
 
@@ -144,6 +127,7 @@ FauiUser _firebaseResponseToUser(Map<String, dynamic> response) {
   return user;
 }
 
+// -- _sendFbApiRequest --------------------------------------------------
 Future<Map<String, dynamic>> _sendFbApiRequest({
   String apiKey,
   String action,
@@ -154,8 +138,7 @@ Future<Map<String, dynamic>> _sendFbApiRequest({
   FauiError.throwIfEmpty(action, "action", FauiFailures.arg);
 
   Map<String, String> headers = {'Content-Type': 'application/json'};
-  String url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:$action?key=$apiKey";
+  String url = "https://identitytoolkit.googleapis.com/v1/accounts:$action?key=$apiKey";
 
   return await sendFauiHttp(
     FauiHttpMethod.post,
@@ -167,6 +150,7 @@ Future<Map<String, dynamic>> _sendFbApiRequest({
   );
 }
 
+// -- fauiRefreshToken ---------------------------------------------------
 Future<FauiUser> fauiRefreshToken({FauiUser user, String apiKey}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(user.refreshToken, "apiKey", FauiFailures.arg);
@@ -190,11 +174,31 @@ Future<FauiUser> fauiRefreshToken({FauiUser user, String apiKey}) async {
   return _firebaseResponseToUser(response);
 }
 
+// -- fauiDeleteUserIfExists ---------------------------------------------
+Future<void> fauiDeleteUserIfExists({
+  String apiKey,
+  String idToken,
+}) async {
+  FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
+  FauiError.throwIfEmpty(idToken, "idToken", FauiFailures.arg);
+
+  await _sendFbApiRequest(
+    apiKey: apiKey,
+    action: _FirebaseActions.DeleteAccount,
+    content: {
+      "idToken": idToken,
+    },
+    acceptableWordsInErrorBody: HashSet.from({FirebaseErrorCodes.UserNotFoundCode}),
+  );
+}
+
 //https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=[API_KEY]
 //https://identitytoolkit.googleapis.com/v1/accounts:delete?key=[API_KEY]
 //https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[API_KEY]
 //https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]
 //https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=[API_KEY]
+
+// -- _FirebaseActions ---------------------------------------------------
 class _FirebaseActions {
   static const SendResetLink = "sendOobCode";
   static const DeleteAccount = "delete";

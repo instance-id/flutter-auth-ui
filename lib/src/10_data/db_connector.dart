@@ -5,11 +5,9 @@ import '../90_infra/faui_error.dart';
 import '../90_infra/faui_http.dart';
 import '../90_model/faui_db.dart';
 
-Future<List<dynamic>> dbQuery(
-  FauiDb db,
-  String idToken,
-  Map<String, dynamic> content,
-) async {
+Future<List<dynamic>> dbQuery(FauiDb db,
+    String idToken,
+    Map<String, dynamic> content,) async {
   return await _sendFbApiRequest(
     db,
     FauiHttpMethod.post,
@@ -19,13 +17,11 @@ Future<List<dynamic>> dbQuery(
   );
 }
 
-Future<void> dbPatchDoc(
-  FauiDb db,
-  String idToken,
-  String collection,
-  String docId,
-  Map<String, dynamic> content,
-) async {
+Future<void> dbPatchDoc(FauiDb db,
+    String idToken,
+    String collection,
+    String docId,
+    Map<String, dynamic> content,) async {
   await _sendFbApiDocRequest(
     db,
     collection,
@@ -36,12 +32,10 @@ Future<void> dbPatchDoc(
   );
 }
 
-Future<Map<String, dynamic>> dbGetDoc(
-  FauiDb db,
-  String idToken,
-  String collection,
-  String docId,
-) async {
+Future<Map<String, dynamic>> dbGetDoc(FauiDb db,
+    String idToken,
+    String collection,
+    String docId,) async {
   return await _sendFbApiDocRequest(
     db,
     collection,
@@ -49,16 +43,14 @@ Future<Map<String, dynamic>> dbGetDoc(
     FauiHttpMethod.get,
     idToken,
     acceptableWordsInErrorBody:
-        HashSet.from({FirebaseErrorCodes.DocumentNotFoundCode}),
+    HashSet.from({FirebaseErrorCodes.DocumentNotFoundCode}),
   );
 }
 
-Future<void> dbDeleteDoc(
-  FauiDb db,
-  String idToken,
-  String collection,
-  String docId,
-) async {
+Future<void> dbDeleteDoc(FauiDb db,
+    String idToken,
+    String collection,
+    String docId,) async {
   return await _sendFbApiDocRequest(
     db,
     collection,
@@ -70,15 +62,14 @@ Future<void> dbDeleteDoc(
 
 const String _fbApiUrl = "https://firestore.googleapis.com/v1/";
 
-Future<Map<String, dynamic>> _sendFbApiDocRequest(
-  FauiDb db,
-  String collection,
-  String docId,
-  FauiHttpMethod operation,
-  String idToken, {
-  HashSet<String> acceptableWordsInErrorBody,
-  Map<String, dynamic> content,
-}) async {
+Future<Map<String, dynamic>> _sendFbApiDocRequest(FauiDb db,
+    String collection,
+    String docId,
+    FauiHttpMethod operation,
+    String idToken, {
+      HashSet<String> acceptableWordsInErrorBody,
+      Map<String, dynamic> content,
+    }) async {
   String url = "${_fbApiUrl}projects/" +
       "${db.projectId}/databases/${db.db}/documents/$collection/$docId/?key=${db.apiKey}";
 
@@ -92,14 +83,13 @@ Future<Map<String, dynamic>> _sendFbApiDocRequest(
   return map;
 }
 
-Future<List<dynamic>> _sendFbApiRequest(
-  FauiDb db,
-  FauiHttpMethod operation,
-  String command,
-  String idToken, {
-  HashSet<String> acceptableWordsInErrorBody,
-  Map<String, dynamic> content,
-}) async {
+Future<List<dynamic>> _sendFbApiRequest(FauiDb db,
+    FauiHttpMethod operation,
+    String command,
+    String idToken, {
+      HashSet<String> acceptableWordsInErrorBody,
+      Map<String, dynamic> content,
+    }) async {
   String url = "${_fbApiUrl}projects/" +
       "${db.projectId}/databases/${db.db}/documents:$command/?key=${db.apiKey}";
 
