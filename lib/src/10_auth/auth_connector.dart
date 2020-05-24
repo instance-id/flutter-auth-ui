@@ -9,16 +9,11 @@ import '../90_model/faui_user.dart';
 // https://firebase.google.com/docs/reference/rest/auth
 
 // -- fauiRegisterUser ---------------------------------------------------
-fauiRegisterUser({
-  String apiKey,
-  String email,
-  String password,
-  bool sendResetLink: true,
-}) async {
+Future<FauiUser> fauiRegisterUser({String apiKey, String email, String password, bool sendResetLink: false}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(email, "email", FauiFailures.user);
 
-  await _sendFbApiRequest(
+  Map<String, dynamic> response = await _sendFbApiRequest(
     apiKey: apiKey,
     action: _FirebaseActions.RegisterUser,
     content: {
@@ -29,15 +24,15 @@ fauiRegisterUser({
 
   if (sendResetLink) {
     await fauiSendResetLink(apiKey: apiKey, email: email);
+  } else {
+    FauiUser user = _firebaseResponseToUser(response);
+    await fauiSendVerificationEmail(apiKey: apiKey, token: user.token);
+    return user;
   }
 }
 
 // -- fauiSignInUser -----------------------------------------------------
-Future<FauiUser> fauiSignInUser({
-  String apiKey,
-  String email,
-  String password,
-}) async {
+Future<FauiUser> fauiSignInUser({ String apiKey, String email, String password}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(email, "email", FauiFailures.user);
   FauiError.throwIfEmpty(password, "password", FauiFailures.user);
@@ -61,10 +56,7 @@ Future<FauiUser> fauiSignInUser({
 }
 
 // -- fauiVerifyToken ----------------------------------------------------
-Future<FauiUser> fauiVerifyToken({
-  String apiKey,
-  String token,
-}) async {
+Future<FauiUser> fauiVerifyToken({String apiKey, String token}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(token, "token", FauiFailures.arg);
 
@@ -95,10 +87,7 @@ Future<FauiUser> fauiVerifyToken({
 }
 
 // -- fauiSendResetLink --------------------------------------------------
-Future<void> fauiSendResetLink({
-  String apiKey,
-  String email,
-}) async {
+Future<void> fauiSendResetLink({String apiKey, String email}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(email, "email", FauiFailures.user);
   await _sendFbApiRequest(
@@ -107,6 +96,20 @@ Future<void> fauiSendResetLink({
     content: {
       "email": email,
       "requestType": "PASSWORD_RESET",
+    },
+  );
+}
+
+// -- fauiSendVerificationEmail ------------------------------------------
+Future<void> fauiSendVerificationEmail({String apiKey, String token}) async {
+  FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
+  FauiError.throwIfEmpty(token, "token", FauiFailures.data);
+  await _sendFbApiRequest(
+    apiKey: apiKey,
+    action: _FirebaseActions.SendEmailVerification,
+    content: {
+      "idToken": token,
+      "requestType": _FirebaseRequest.VERIFY_EMAIL,
     },
   );
 }
@@ -128,12 +131,7 @@ FauiUser _firebaseResponseToUser(Map<String, dynamic> response) {
 }
 
 // -- _sendFbApiRequest --------------------------------------------------
-Future<Map<String, dynamic>> _sendFbApiRequest({
-  String apiKey,
-  String action,
-  Map<String, dynamic> content,
-  HashSet<String> acceptableWordsInErrorBody,
-}) async {
+Future<Map<String, dynamic>> _sendFbApiRequest({String apiKey, String action, Map<String, dynamic> content, HashSet<String> acceptableWordsInErrorBody}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(action, "action", FauiFailures.arg);
 
@@ -175,10 +173,7 @@ Future<FauiUser> fauiRefreshToken({FauiUser user, String apiKey}) async {
 }
 
 // -- fauiDeleteUserIfExists ---------------------------------------------
-Future<void> fauiDeleteUserIfExists({
-  String apiKey,
-  String idToken,
-}) async {
+Future<void> fauiDeleteUserIfExists({String apiKey, String idToken}) async {
   FauiError.throwIfEmpty(apiKey, "apiKey", FauiFailures.arg);
   FauiError.throwIfEmpty(idToken, "idToken", FauiFailures.arg);
 
@@ -200,9 +195,15 @@ Future<void> fauiDeleteUserIfExists({
 
 // -- _FirebaseActions ---------------------------------------------------
 class _FirebaseActions {
+  static const SendEmailVerification = "sendOobCode";
   static const SendResetLink = "sendOobCode";
   static const DeleteAccount = "delete";
   static const RegisterUser = "signUp";
   static const SignIn = "signInWithPassword";
   static const Verify = "lookup";
+}
+
+class _FirebaseRequest {
+  static const VERIFY_EMAIL = "VERIFY_EMAIL";
+  static const PASSWORD_RESET = "PASSWORD_RESET";
 }

@@ -22,7 +22,7 @@ Future<T> sendFauiHttp<T>(FauiHttpMethod method,
   Response response;
   switch (method) {
     case FauiHttpMethod.get:
-      fauiAssert(content == null, "Content should be null fot http get.");
+      fauiAssert(content == null, "Content should be null for http get.");
       response = await get(
         url,
         headers: headers,

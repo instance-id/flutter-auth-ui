@@ -34,6 +34,8 @@ class FauiError extends Error {
 
     if (failure == FauiFailures.user) {
       throw FauiError("$name should not be empty", FauiFailures.user);
+    }  else if (failure == FauiFailures.data) {
+      throw FauiError("$name should not be empty", FauiFailures.data);
     }
     throw FauiError("$name should not be empty, but it is $value", failure);
   }
@@ -49,7 +51,7 @@ class FauiError extends Error {
       if (exception.message.contains(FirebaseErrorCodes.UserNotFoundCode))
         return "User not found.";
       if (exception.message.contains(FirebaseErrorCodes.EmailNotFoundCode))
-        return "EMail not found.";
+        return "Email not found.";
       if (exception.message.contains(FirebaseErrorCodes.InvalidEmailCode))
         return "Invalid EMail.";
       if (exception.message.contains(FirebaseErrorCodes.InvalidPasswordCode))
